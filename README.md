@@ -5,7 +5,7 @@ This is a plugin for [easyDB 5](http://5.easydb.de/) with MaskSplitter `EditorFi
 
 ## configuration
 
-As defined in `Splitter.config.yml` this datatype can be configured:
+As defined in `Splitter.config.yml` this masksplitter can be configured:
 
 ### Mask options
 
