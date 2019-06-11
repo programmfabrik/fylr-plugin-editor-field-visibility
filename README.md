@@ -9,7 +9,7 @@ As defined in `Splitter.config.yml` this masksplitter can be configured:
 
 ### Mask options
 
-* Name of the observed field, which Triggers the visibility of fields
+* Name of the observed field, which triggers the visibility of fields
 * JSON-Config about the fields to hide. See example below
 
 ##### Example JSON-Config
