@@ -1,0 +1,12 @@
+{
+	"http://uri.gbv.de/terminology/gender/a0e9160d-2db0-4030-80df-c96b6bfc49e5": [
+		"feld1",
+		"feld"
+	],
+	"http://uri.gbv.de/terminology/gender/ee9a0f2d-f935-49c3-819c-c6b60b81c145": [
+		"feld2",
+		"feld3"
+	]
+}
+
+{ "http://uri.gbv.de/terminology/gender/a0e9160d-2db0-4030-80df-c96b6bfc49e5": [ "feld1", "feld" ], "http://uri.gbv.de/terminology/gender/ee9a0f2d-f935-49c3-819c-c6b60b81c145": [ "feld2", "feld3" ] } 
