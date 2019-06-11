@@ -14,7 +14,8 @@ As defined in `Splitter.config.yml` this datatype can be configured:
 
 ##### Example JSON-Config
 
-~~~~{
+~~~~
+{
 	"http://uri.gbv.de/terminology/gender/a0e9160d-2db0-4030-80df-c96b6bfc49e5": ["easydb_editor_field_visibility__eventblock.easydb_editor_field_visibility__eventblock__unterblock.unterfeld2"],
 	"http://uri.gbv.de/terminology/gender/bd847cc5-5583-4081-909f-37545090b77b": ["easydb_editor_field_visibility__eventblock.easydb_editor_field_visibility__eventblock__unterblock.unterfeld2", "depending_field_selection_test__eventblock.depending_field_selection_test__eventblock__unterblock.unterfeld3"],
 	"http://uri.gbv.de/terminology/gender/e8d90fc1-de50-416f-91bf-5650005813b8": ["easydb_editor_field_visibility__eventblock.easydb_editor_field_visibility__eventblock__unterblock.unterfeld3"]
