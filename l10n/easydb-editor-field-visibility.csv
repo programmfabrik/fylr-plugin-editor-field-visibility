@@ -1,7 +1,0 @@
-,key,de-DE,en-US
-,editor.field.visibility.title|text,Feldauswahl auf Grundlage des Wertes eines Feldes,Field selection based on the value of a field
-,editor.field.visibility.name,Feldauswahl auf Grundlage des Wertes eines Feldes,Field selection based on the value of a field
-,editor.field.visibility.nameofobservedfield,Name des zu überwachenden Feldes, Name of observed field
-,editor.field.visibility.map,JSON-Map, JSON-map
-,editor.field.visibility.option.observedfield,Überwachtes Feld,ObservedField
-,editor.field.visibility.option.jsonmap,JSON-Map,JSON-map
