@@ -1,10 +1,10 @@
 plugin:
   name: easydb-editor-field-visibility
-  version: 1.0
-  url: https://www.gbv.de
+  version: 1.1
+  url: https://github.com/programmfabrik/easydb-editor-field-visibility
   displayname:
-    de-DE: Feldauswahl auf Basis des Wertes eines anderen Feldes
-    en-US: Field selection based on the value of another field
+    de-DE: Feldauswahl auf Basis eines anderen Feldes
+    en-US: Field selection based on another fields value
   info:
     de-DE: Custom Mask Splitter to show / hide fields in Editor, depending on other fields.
     en-US: Custom Mask Splitter to show / hide fields in Editor, depending on other fields.
