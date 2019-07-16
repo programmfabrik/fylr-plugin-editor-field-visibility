@@ -1,12 +1,12 @@
 # easydb-editor-field-visibility
-Custom Mask Splitter to show / hide fields in Editor, depending on other fields. Right now, the triggerfield must be a custom-data-type-dante, in future it also can be bool, int or whatever.
+Custom Mask Splitter to show / hide fields in Editor, depending on other fields. Right now, the triggerfield must be a custom-data-type-dante or a boolean-field
 
 This is a plugin for [easyDB 5](http://5.easydb.de/) with MaskSplitter `EditorFieldSelection`.
 
 ## configuration
 
 As defined in `Splitter.config.yml` this masksplitter can be configured:
- 
+
 ### Mask options
 
 * Name of the observed field, which triggers the visibility of fields
@@ -16,17 +16,17 @@ As defined in `Splitter.config.yml` this masksplitter can be configured:
 
 ~~~~
 {
-	"männlich": {
-		"uri": "http://uri.gbv.de/terminology/gender/a0e9160d-2db0-4030-80df-c96b6bfc49e5",
-		"fields": ["easydb_editor_field_visibility__eventblock.easydb_editor_field_visibility__eventblock__unterblock.unterfeld2"]
+	"capture_journey": {
+		"value": "http://uri.gbv.de/terminology/prizepapers_journey_type/f005efa8-7340-4b45-bb52-77ce42a42e25",
+		"fields": ["journey__mehrfach.field1", "journey__mehrfach.journey__mehrfach__mehrfach2.bool"]
 	},
-	"unbekannt": {
-		"uri": "http://uri.gbv.de/terminology/gender/bd847cc5-5583-4081-909f-37545090b77b",
-		"fields": ["easydb_editor_field_visibility__eventblock.easydb_editor_field_visibility__eventblock__unterblock.unterfeld2", "depending_field_selection_test__eventblock.depending_field_selection_test__eventblock__unterblock.unterfeld3"]
+	"forced_journey": {
+		"value": "http://uri.gbv.de/terminology/prizepapers_journey_type/db0ecf20-96ca-45bf-b0c2-eb2097adf1f0",
+		"fields": ["place_end_intended", "capture"]
 	},
-	"transgender": {
-		"uri": "http://uri.gbv.de/terminology/gender/e8d90fc1-de50-416f-91bf-5650005813b8",
-		"fields": ["easydb_editor_field_visibility__eventblock.easydb_editor_field_visibility__eventblock__unterblock.unterfeld3"]
+	"journey": {
+		"value": "http://uri.gbv.de/terminology/prizepapers_journey_type/94b943b7-ee9f-4818-8b8e-d7d4beef58fb",
+		"fields": ["place_end_intended", "capture", "journey__mehrfach.journey__mehrfach__mehrfach2.bool", "journey__mehrfach.journey__mehrfach__mehrfach2.sex"]
 	}
 }
 ~~~~
