@@ -18,15 +18,15 @@ As defined in `Splitter.config.yml` this masksplitter can be configured:
 {
 	"capture_journey": {
 		"value": "http://uri.gbv.de/terminology/prizepapers_journey_type/f005efa8-7340-4b45-bb52-77ce42a42e25",
-		"fields": ["journey__mehrfach.field1", "journey__mehrfach.journey__mehrfach__mehrfach2.bool"]
+		"fields": ["journey.journey__mehrfach.field1", "journey.journey__mehrfach.journey__mehrfach__mehrfach2.bool"]
 	},
 	"forced_journey": {
 		"value": "http://uri.gbv.de/terminology/prizepapers_journey_type/db0ecf20-96ca-45bf-b0c2-eb2097adf1f0",
-		"fields": ["place_end_intended", "capture"]
+		"fields": ["journey.place_end_intended", "journey.capture", "journey.journey__mehrfach.journey__mehrfach__mehrfach2"]
 	},
 	"journey": {
 		"value": "http://uri.gbv.de/terminology/prizepapers_journey_type/94b943b7-ee9f-4818-8b8e-d7d4beef58fb",
-		"fields": ["place_end_intended", "capture", "journey__mehrfach.journey__mehrfach__mehrfach2.bool", "journey__mehrfach.journey__mehrfach__mehrfach2.sex"]
+		"fields": ["journey.place_end_intended", "journey.capture", "journey.journey__mehrfach.journey__mehrfach__mehrfach2.bool", "journey.journey__mehrfach.journey__mehrfach__mehrfach2.sex"]
 	}
 }
 ~~~~

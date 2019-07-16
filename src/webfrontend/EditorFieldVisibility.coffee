@@ -46,21 +46,15 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
     #console.warn "f:__getFlatListOfAffectedSplitterFields"
     #console.log "with innerSplitterFields", innerSplitterFields
     fieldList = []
-    # if array-wrapped? --> unwrap
-    #console.log Array.isArray(innerSplitterFields)
-    #console.log (innerSplitterFields.length);
 
     # is array?
     for fieldName, field of innerSplitterFields
-
-      #console.log "fieldName:" + fieldName
-      #console.log "field:", field
 
       #########################################
       # NESTED as field
       # if name contains "_nested:" and not contains ":rendered", if contains fields below
       if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') > -1)
-        #console.log "nested field:rendered"
+        #console.error "nested field:rendered"
         #console.log field
         cleanedFieldName = fieldName.replace(/_nested:/g, '')
         cleanedFieldName = cleanedFieldName.replace(/:rendered/g, '')
@@ -68,6 +62,8 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
           fieldName = prefix + '.' + cleanedFieldName
         else
           fieldName = cleanedFieldName
+        fieldName = @objecttype + '.' + fieldName
+        #console.error fieldName
         if @splitterFieldNames.indexOf(fieldName) != -1
           fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement()
 
@@ -142,10 +138,7 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
     if not innerSplitterFields
       return innerFields
 
-    console.log opts
-
     console.log "innerSplitterFields", innerSplitterFields
-
     @splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
     console.error "splitterFieldNames",  @splitterFieldNames
 
@@ -231,19 +224,19 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
           foundInMap = false
           for jsonMapEntryName, jsonMapValue of jsonMap
             # if value of observedfield matches jsonMapEntry
-            console.log "jsonMapValue:", jsonMapValue
+            #console.log "jsonMapValue:", jsonMapValue
             if jsonMapValue?.value.trim() == observedFieldValue
               if jsonMapValue?.fields.length > 0
                 foundInMap = true
               # compare actionFieldName and jsonMapFields and hide or show
               if jsonMapValue?.fields.indexOf(actionField.name) != -1
-                console.log "hide element"
+                #console.log "hide element"
                 #console.log actionField
                 CUI.dom.hideElement(actionField.element)
                 hiddenSplitterFields.push actionField
                 #console.log hiddenSplitterFields
               else
-                console.log "show element!"
+                #console.log "show element!"
                 CUI.dom.showElement(actionField.element)
               break
           # if observedFieldValue not in jsonMap, show all fields
