@@ -1,7 +1,10 @@
 # easydb-editor-field-visibility
-Custom Mask Splitter to show / hide fields in Editor, depending on other fields. Right now, the triggerfield must be a custom-data-type-dante or a boolean-field
+Custom Mask Splitter to hide fields in Editor, depending on another fields value. Right now, the triggerfield must be a custom-data-type-dante or a boolean-field
 
 This is a plugin for [easyDB 5](http://5.easydb.de/) with MaskSplitter `EditorFieldSelection`.
+
+<img src="https://github.com/programmfabrik/easydb-editor-field-visibility/blob/master/examples/images/example1.gif" />
+<img src="https://github.com/programmfabrik/easydb-editor-field-visibility/blob/master/examples/images/example2.gif" />
 
 ## configuration
 
