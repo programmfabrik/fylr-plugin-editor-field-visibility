@@ -1,0 +1,10 @@
+{
+	"on": {
+		"value": "true",
+		"fields": []
+	},
+	"off": {
+		"value": "false",
+		"fields": ["journey_2.journey_2__mehrfach.journey_2__mehrfach__mehrfach2.field"]
+	}
+}
