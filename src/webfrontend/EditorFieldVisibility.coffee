@@ -1,9 +1,9 @@
-# { "capture_journey": { "value": "http://uri.gbv.de/terminology/prizepapers_journey_type/f005efa8-7340-4b45-bb52-77ce42a42e25", "fields": ["journey__mehrfach.field1", "journey__mehrfach.journey__mehrfach__mehrfach2.bool"] }, "forced_journey": { "value": "http://uri.gbv.de/terminology/prizepapers_journey_type/db0ecf20-96ca-45bf-b0c2-eb2097adf1f0", "fields": ["place_end_intended", "capture"] }, "journey": { "value": "http://uri.gbv.de/terminology/prizepapers_journey_type/94b943b7-ee9f-4818-8b8e-d7d4beef58fb", "fields": ["place_end_intended", "capture", "journey__mehrfach.journey__mehrfach__mehrfach2.bool", "journey__mehrfach.journey__mehrfach__mehrfach2.sex"] } }
+###
+  TODO TODO # TODO:
 
-
-# list of hidden fields, which will be deleted if "save"-button is triggered
-hiddenSplitterFields = []
-
+  bestehende Probleme:
+  - wenn in einem Wiederholblock keine felder mehr sind, soll der ganze block weg sein, auch der Plus-Button etc..
+###
 class ez5.EditorFieldVisibility extends CustomMaskSplitter
 
   isSimpleSplit: ->
@@ -14,6 +14,8 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
 
   ##########################################################################################
   # get a fieldnames <-> field - concordances from a list of fields
+  ##########################################################################################
+
   __getFieldNamesFieldConcordanceFromFieldList: (fieldList)->
     fieldsToReturn = {}
     for field in fieldList
@@ -35,6 +37,8 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
 
   ##########################################################################################
   # get a list of fieldnames inside of this splitter
+  ##########################################################################################
+
   __getListOfFieldNamesInsideSplitter: (fieldList)->
     list = @__getFieldNamesFieldConcordanceFromFieldList(fieldList)
     resultList = []
@@ -42,67 +46,71 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
       resultList.push key
     return resultList
 
-  __getFlatListOfAffectedSplitterFields: (innerSplitterFields, prefix = '') ->
-    #console.warn "f:__getFlatListOfAffectedSplitterFields"
-    #console.log "with innerSplitterFields", innerSplitterFields
+  __getFlatListOfAffectedSplitterFields: (optsData, prefix = '') ->
     fieldList = []
-
+    #console.warn "__getFlatListOfAffectedSplitterFields"
+    #console.warn "optsData", optsData
     # is array?
-    for fieldName, field of innerSplitterFields
-
-      #########################################
-      # NESTED as field
-      # if name contains "_nested:" and not contains ":rendered", if contains fields below
-      if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') > -1)
-        #console.error "nested field:rendered"
-        #console.log field
-        cleanedFieldName = fieldName.replace(/_nested:/g, '')
-        cleanedFieldName = cleanedFieldName.replace(/:rendered/g, '')
-        if prefix != ''
-          fieldName = prefix + '.' + cleanedFieldName
-        else
-          fieldName = cleanedFieldName
-        fieldName = @objecttype + '.' + fieldName
-        #console.error fieldName
-        if @splitterFieldNames.indexOf(fieldName) != -1
-          fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement()
-
-      #########################################
-      # NESTED
-      # if name contains "_nested:" and not contains ":rendered", if contains fields below
-      if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') == -1)
-        #console.log "nested field, not rendered"
-        #console.log field
-        for fieldEntry in field
+    for fieldName, field of optsData
+      if ! fieldName.startsWith '_version'
+        #########################################
+        # NESTED as field
+        # if name contains "_nested:" and contains ":rendered", if contains fields below
+        if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') > -1)
           cleanedFieldName = fieldName.replace(/_nested:/g, '')
+          cleanedFieldName = cleanedFieldName.replace(/:rendered/g, '')
+          #console.warn "cleanedFieldName", cleanedFieldName
           if prefix != ''
-            newPrefix = prefix + '.' + cleanedFieldName
+            fieldName = prefix + '.' + cleanedFieldName
           else
-            newPrefix = cleanedFieldName
-          fields = @__getFlatListOfAffectedSplitterFields(fieldEntry, newPrefix)
-          fieldList = fieldList.concat fields
+            fieldName = cleanedFieldName
+          fieldName = @objecttype + '.' + fieldName
+          #console.warn "fieldName", fieldName
+          if @splitterFieldNames.indexOf(fieldName) != -1
+            fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement()
+          # it is the block and not a field
+          else
+            fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement(), 'type' : 'block'
+            #console.warn "ist jetzt drin!!2"
 
-      #########################################
-      # FIELD
-      if fieldName.indexOf('_nested:') == -1 &&  (fieldName.indexOf(':rendered') > -1)
-        #console.warn "is normal field, push"
-        if prefix != ''
-          fieldName = prefix + '.' + fieldName.replace(':rendered', '')
-        else
-          fieldName = fieldName.replace(':rendered', '')
-        fieldName = field.opts.field.__dbg_full_name
-        #console.log fieldName
-        fieldName = fieldName.replace(/_nested:/g, '')
-        #console.log fieldName
-        #console.log @splitterFieldNames
-        if @splitterFieldNames.indexOf(fieldName) != -1
-          fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement(), 'type' : field._field.ColumnSchema.type
-          #console.warn "push done!"
+        #########################################
+        # NESTED
+        # if name contains "_nested:" and not contains ":rendered", if contains fields below
+        if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') == -1)
+          for fieldEntry in field
+            cleanedFieldName = fieldName.replace(/_nested:/g, '')
+            if prefix != ''
+              newPrefix = prefix + '.' + cleanedFieldName
+            else
+              newPrefix = cleanedFieldName
+            fields = @__getFlatListOfAffectedSplitterFields(fieldEntry, newPrefix)
+            fieldList = fieldList.concat fields
+
+        #########################################
+        # FIELD
+        if fieldName.indexOf('_nested:') == -1 && (fieldName.indexOf(':rendered') > -1)
+          if prefix != ''
+            fieldName = prefix + '.' + fieldName.replace(':rendered', '')
+          else
+            fieldName = fieldName.replace(':rendered', '')
+          fieldName = field.opts.field.__dbg_full_name
+          fieldName = fieldName.replace(/_nested:/g, '')
+          fieldNameParts = fieldName.split('.')
+          lastPartOfFieldName = fieldNameParts.pop()
+          if @splitterFieldNames.indexOf(fieldName) != -1
+            fieldType = field._field.ColumnSchema.type
+            if fieldType.indexOf('custom-data-type') > 0
+              isCustomType = true
+            else
+              isCustomType = false
+            fieldList.push 'dataTarget' : lastPartOfFieldName, 'dataReference' : optsData, 'name' : fieldName, 'field' : field, 'element' : field.getElement(), 'type' : fieldType, 'isCustomType' : isCustomType
 
     return fieldList
 
   ##########################################################################################
   # main methode
+  ##########################################################################################
+
   renderField: (opts) ->
     that = @
 
@@ -122,13 +130,16 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
       return innerFields
 
     jsonMap = @getDataOptions().jsonmap
-
-    #console.log jsonMap
+    jsonTargetPath = @getDataOptions().jsontargetpath
 
     if CUI.util.isEmpty(jsonMap)
       return innerFields
     else
       jsonMap = JSON.parse(jsonMap)
+
+    for jsonMapKey, jsonMapEntry of jsonMap
+      for fieldsValue, fieldsKey in jsonMapEntry.fields
+        jsonMap[jsonMapKey].fields[fieldsKey] = jsonTargetPath + '.' + jsonMapEntry.fields[fieldsKey]
 
     # Renderer given?
     fieldsRendererPlain = @__customFieldsRenderer.fields[0]
@@ -138,23 +149,20 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
     if not innerSplitterFields
       return innerFields
 
-    console.log "innerSplitterFields", innerSplitterFields
     @splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
-    console.error "splitterFieldNames",  @splitterFieldNames
-
-    console.error "opts.data", opts.data
-    #console.error "fields", fields
-    console.error @__getFlatListOfAffectedSplitterFields(opts.data)
 
     for splitterField in @__getFlatListOfAffectedSplitterFields(opts.data)
       if splitterField.name == observedFieldName
         # get type of observed field
         columnType = splitterField.type
         observedField = splitterField.field
-    console.log "observedField", observedField
-    console.log "columnType", columnType
 
-    # rerender if editor changes
+    CUI.Events.listen
+      type: ["data-changed"]
+      node: innerFields[0]
+      call: (ev, info) =>
+        @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName)
+
     CUI.Events.listen
       type: ["editor-changed"]
       call: (ev, info) =>
@@ -166,85 +174,171 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
 
   ##########################################################################################
   # show or hide fields, depending on jsonMap and oberservedfield-value
+  ##########################################################################################
+
   __manageVisibilitys: (opts, columnType, observedField, jsonMap, observedFieldName) ->
-    console.warn "f: __manageVisibilitys"
-    hiddenSplitterFields = []
-    #console.log opts
+    that = @
 
     # get Value from observed field
     observedFieldValue = ''
-    #console.log jsonMap
 
     # make a list of field's names, which are in the splitter and may be shown or hidden
     actionFields = []
-    console.log "opts.data", opts.data
+    #console.error "opts.data", opts.data
     actionFields = @__getFlatListOfAffectedSplitterFields(opts.data)
-    console.error actionFields
 
     #########################################
-    # if columnType == CustomDataTypeDANTE
+    # observedfield: if columnType == CustomDataTypeDANTE
     #########################################
     if columnType == 'custom:base.custom-data-type-dante.dante'
-      console.log "columnType = DANTE!"
       dataAsString = observedField._field.getDataAsString(observedField._data, observedField._top_level_data)
-      dataAsJson = JSON.parse dataAsString
-      observedFieldValue = dataAsJson.conceptURI
-      if ! CUI.util.isEmpty(observedFieldValue)
-        observedFieldValue = observedFieldValue.replace('https', 'http')
-        console.log "observedFieldValue", observedFieldValue
+      if ! CUI.util.isEmpty(dataAsString)
+        dataAsJson = JSON.parse dataAsString
+        observedFieldValue = dataAsJson.conceptURI
+        if observedFieldValue
+          observedFieldValue = observedFieldValue.replace('https', 'http')
+      else
+        observedFieldValue = null
 
     #########################################
-    # if columnType == 'bool'
+    # observedfield: if columnType == 'bool'
     #########################################
     if columnType == 'boolean'
-      console.error "columnType: boool"
       observedFieldValue = observedField._field.getDataAsString(observedField._data, observedField._top_level_data)
-      #console.warn observedFieldValue
       if observedFieldValue == ''
         observedFieldValue = 'false'
-      #console.log "data:" + observedFieldValue
-      #console.log "actionFields:", actionFields
 
+    ##################################################################################
     # if observedFieldValue is empty --> hide all fields, except the observed field
+    ##################################################################################
     if CUI.util.isEmpty(observedFieldValue) # || CUI.util.isEmpty(jsonMap[observedFieldValue]
       for actionField in actionFields
-        #console.log actionField
         # dont hide the observed field
         if actionField.name != observedFieldName
           # dont hide a nested-block, if observedField is in that nested
           if observedFieldName.indexOf(actionField.name) == -1
-            CUI.dom.hideElement(actionField.element)
+            that.hideAndClearActionField(actionField)
+
+    ##################################################################################
     # if observed field is not empty, show / hide fields in splitter, depending on json-map
+    ##################################################################################
     else
-      #console.error "jsonMap",jsonMap
-      console.log "observedFieldValue:" + observedFieldValue
       for actionField in actionFields
         if actionField.name != observedFieldName
           # try to find observedFieldValue in jsonmap
           foundInMap = false
           for jsonMapEntryName, jsonMapValue of jsonMap
             # if value of observedfield matches jsonMapEntry
-            #console.log "jsonMapValue:", jsonMapValue
-            if jsonMapValue?.value.trim() == observedFieldValue
+            if jsonMapValue?.value?.trim() == observedFieldValue
               if jsonMapValue?.fields.length > 0
                 foundInMap = true
               # compare actionFieldName and jsonMapFields and hide or show
               if jsonMapValue?.fields.indexOf(actionField.name) != -1
-                #console.log "hide element"
-                #console.log actionField
-                CUI.dom.hideElement(actionField.element)
-                hiddenSplitterFields.push actionField
-                #console.log hiddenSplitterFields
+                that.hideAndClearActionField(actionField)
               else
-                #console.log "show element!"
                 CUI.dom.showElement(actionField.element)
               break
           # if observedFieldValue not in jsonMap, show all fields
           if ! foundInMap
             CUI.dom.showElement(actionField.element)
 
+
+  ##################################################################################
+  # hide an clear a mask-field
+  ##########################################################################################
+
+  hideAndClearActionField: (actionField) ->
+    #console.error actionField
+    domInput = CUI.dom.matchSelector(actionField.element, ".cui-data-field")[0]
+    domData = CUI.dom.data(domInput, "element")
+
+    if domData
+      rowType = domData.constructor.name
+    else
+      rowType = ''
+
+    # hide field
+    CUI.dom.hideElement(actionField.element)
+
+    # clear value of field
+    if domData || actionField.isCustomType
+        if actionField?.dataReference
+          if actionField.dataReference[actionField.dataTarget]
+            if typeof actionField.dataReference[actionField.dataTarget] == 'object'
+              for deletionValue of actionField.dataReference[actionField.dataTarget]
+                if actionField.dataReference[actionField.dataTarget][deletionValue]
+                  if actionField.type == 'text_l10n' || actionField.type == 'text_l10n_oneline'
+                    actionField.dataReference[actionField.dataTarget][deletionValue] = ''
+                  else
+                    delete actionField.dataReference[actionField.dataTarget][deletionValue]
+
+        ##################################
+        # easy to clear values
+        ##################################
+        easyTypes =
+          'Input' : ''
+          'Checkbox' : false
+          'DateTime' : ''
+          'NumberInput' : null
+
+        if rowType of easyTypes
+          domData.setValue(easyTypes[rowType])
+
+        ##################################
+        # clear more complex fields
+        ##################################
+        if rowType == 'MultiInput'
+          for input in domData.__inputs
+            input.setValue('')
+
+        if actionField.type == 'daterange'
+          for input in domData.getFields()
+            input.setValue('')
+
+        ##################################
+        # clear custom-Types
+        ##################################
+        customDataTypes = [
+          'custom:base.custom-data-type-dante.dante'
+          'custom:base.custom-data-type-geonames.geonames'
+          'custom:base.custom-data-type-getty.getty'
+          'custom:base.custom-data-type-gnd.gnd'
+          'custom:base.custom-data-type-gn250.gn250'
+          'custom:base.custom-data-type-georef.georef'
+          'custom:base.custom-data-type-gazetteer.gazetteer'
+          'custom:base.custom-data-type-link.link'
+          'custom:base.custom-data-type-gvk.gvk'
+          'custom:base.custom-data-type-nomisma.nomisma'
+        ]
+        if actionField.type in customDataTypes
+
+          actionField.field.setChanges()
+          actionField.field.initOpts()
+
+          if domData
+            domData.unsetData()
+
+          node = CUI.dom.matchSelector(actionField.element, ".customPluginEditorLayout")
+          if ! node
+            node = CUI.dom.matchSelector(actionField.element, ".dante_InlineSelect")
+
+          if node
+            CUI.Events.registerEvent
+              type: "custom-deleteDataFromPlugin"
+              bubble: false
+            CUI.Events.trigger
+              type: 'custom-deleteDataFromPlugin'
+              node: node[0]
+              bubble: false
+
+        if (! actionField.isCustomType || domData) && actionField.type != 'text_l10n' && actionField.type != 'text_l10n_oneline'
+          if domData
+            domData.displayValue()
+
   ##########################################################################################
   # make Option out of linked-table
+  ##########################################################################################
+
   __getOptionsFromLinkedTable: (linkedField)->
     newOptions = []
     for field in linkedField.mask.fields
@@ -256,6 +350,8 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
 
   ##########################################################################################
   # make Option from Field
+  ##########################################################################################
+
   __getOptionFromField: (field, complex) ->
     newOption =
       value : field._full_name
@@ -264,6 +360,8 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
 
   ##########################################################################################
   # get Options from MaskSettings
+  ##########################################################################################
+
   getOptions: ->
     fieldOptions = []
     if @opts?.maskEditor
@@ -282,6 +380,11 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
       options: fieldOptions
       ,
         form:
+          label: $$('editor.field.visibility.targetpath')
+        type: CUI.Input
+        name: "jsontargetpath"
+      ,
+        form:
           label: $$('editor.field.visibility.map')
         type: CUI.Input
         name: "jsonmap"
@@ -292,37 +395,3 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
     true
 CUI.ready =>
   MaskSplitter.plugins.registerPlugin(ez5.EditorFieldVisibility)
-
-##########################################################################################
-# also register an EditorPlugin to clear hidden fields inside the editor-fields-visibility-Splitter
-##########################################################################################
-
-class ez5.EditorFieldVisibiliyClearHiddenFields extends ez5.EditorPlugin
-
-  checkForm: (opts) ->
-    data = opts.resultObject.getData()
-    #console.warn data
-    #console.warn "hiddenSplitterFields", hiddenSplitterFields
-    #console.log "mask changed --> show or hide fields in editor!"
-    #console.log opts
-    @
-
-  #onSave: (opts) ->#
-    #data = opts.resultObject.getData()
-    #console.warn "hiddenSplitterFields", hiddenSplitterFields
-    #for hiddenFieldsName in hiddenSplitterFields
-    #  data[data._objecttype][hiddenFieldsName] = null
-
-    # checken, ob das auch mit wiederholfenldern etc funktioniert....
-    ########
-    ########
-    ########  TODO TODO TODO
-    ########
-
-    #opts.resultObject.setData(data)
-
-    #problems = []
-    #return problems
-
-ez5.session_ready ->
-  Editor.plugins.registerPlugin(ez5.EditorFieldVisibiliyClearHiddenFields)

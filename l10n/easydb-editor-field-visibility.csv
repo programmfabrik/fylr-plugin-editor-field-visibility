@@ -5,3 +5,5 @@
 ,editor.field.visibility.map,JSON-Map, JSON-map
 ,editor.field.visibility.option.observedfield,Überwachtes Feld,ObservedField
 ,editor.field.visibility.option.jsonmap,JSON-Map,JSON-map
+,editor.field.visibility.targetpath,JSON-Zielpfad, JSON-Targetpath
+,editor.field.visibility.option.jsontargetpath,JSON-Zielpfad, JSON-Targetpath

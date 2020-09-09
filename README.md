@@ -8,12 +8,13 @@ This is a plugin for [easyDB 5](http://5.easydb.de/) with MaskSplitter `EditorFi
 
 ## configuration
 
-As defined in `Splitter.config.yml` this masksplitter can be configured:
+This masksplitter can be configured:
 
 ### Mask options
 
 * Name of the observed field, which triggers the visibility of fields
-* JSON-Config about the fields to hide. See example below
+* JSON-Map about the fields to hide. See example below
+* JSON-Path with which the JSON-Map starts
 
 ##### Example JSON-Config
 
