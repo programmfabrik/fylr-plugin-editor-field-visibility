@@ -223,23 +223,44 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
     # if observed field is not empty, show / hide fields in splitter, depending on json-map
     ##################################################################################
     else
+      #console.warn "observedFieldValue", observedFieldValue
+      #console.warn "observedFieldName", observedFieldName
+      #console.warn "jsonMap", jsonMap
+
+      # check if a mapping exists in jsonmap for the given observedfieldvalue
+      jsonMatchedMappingFields = false;
+      for jsonMapEntryName, jsonMapValue of jsonMap
+        #console.log "jsonMapEntryName", jsonMapEntryName
+        #console.log "jsonMapValue", jsonMapValue
+        if jsonMapValue?.value?.trim() == observedFieldValue
+          if jsonMapValue?.fields
+            jsonMatchedMappingFields = jsonMapValue.fields
+            break;
+
+      #console.warn jsonMatchedMappingFields
+      #console.warn typeof jsonMatchedMappingFields
+
+      # help activated? Then echo all actionfield.names in console
+      if @getDataOptions()?.helpwithactionfieldnames == 1
+        console.warn "List of actionfield-path-names inside the splitter:"
+        for actionField in actionFields
+          if actionField.name != observedFieldName
+            console.log actionField.name
+
+      # go through all fields in splitter and show or hide, depending on mapping
       for actionField in actionFields
         if actionField.name != observedFieldName
-          # try to find observedFieldValue in jsonmap
-          foundInMap = false
-          for jsonMapEntryName, jsonMapValue of jsonMap
-            # if value of observedfield matches jsonMapEntry
-            if jsonMapValue?.value?.trim() == observedFieldValue
-              if jsonMapValue?.fields.length > 0
-                foundInMap = true
-              # compare actionFieldName and jsonMapFields and hide or show
-              if jsonMapValue?.fields.indexOf(actionField.name) != -1
-                that.hideAndClearActionField(actionField)
-              else
-                CUI.dom.showElement(actionField.element)
-              break
-          # if observedFieldValue not in jsonMap, show all fields
-          if ! foundInMap
+          #console.log "now in " + actionField.name
+          if jsonMatchedMappingFields
+            # console.log "111"
+            # console.warn "jsonMatchedMappingFields.indexOf(actionField.name)", jsonMatchedMappingFields.indexOf(actionField.name)
+            # console.warn "jsonMatchedMappingFields.includes(actionField.name)", jsonMatchedMappingFields.includes(actionField.name)
+            if jsonMatchedMappingFields.indexOf(actionField.name) != -1 || jsonMatchedMappingFields.includes(actionField.name) != false
+              #console.log "222"
+              that.hideAndClearActionField(actionField)
+            else
+              CUI.dom.showElement(actionField.element)
+          else
             CUI.dom.showElement(actionField.element)
 
 
@@ -249,6 +270,7 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
 
   hideAndClearActionField: (actionField) ->
     #console.error actionField
+    #console.log("hide field: " + actionField.name)
     domInput = CUI.dom.matchSelector(actionField.element, ".cui-data-field")[0]
     domData = CUI.dom.data(domInput, "element")
 
@@ -271,6 +293,12 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
                     actionField.dataReference[actionField.dataTarget][deletionValue] = ''
                   else
                     delete actionField.dataReference[actionField.dataTarget][deletionValue]
+
+        #console.error rowType,  actionField.type
+
+        ##################################
+        # hide multifield
+        ##################################
 
         ##################################
         # easy to clear values
@@ -363,6 +391,7 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   getOptions: ->
+    that = @
     fieldOptions = []
     if @opts?.maskEditor
       fields = @opts.maskEditor.opts.schema.fields
@@ -388,6 +417,26 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
           label: $$('editor.field.visibility.map')
         type: CUI.Input
         name: "jsonmap"
+      ,
+        form:
+          label: $$('editor.field.visibility.helpwithactionfieldnames')
+        type: CUI.Select
+        undo_and_changed_support: false
+        name: 'helpwithactionfieldnames'
+        empty_text: $$('editor.field.visibility.helpwithactionfieldnames_no')
+        options: (thisSelect) =>
+          select_items = []
+          itemNo = (
+            text: $$('editor.field.visibility.helpwithactionfieldnames_no')
+            value: 0
+          )
+          select_items.push itemNo
+          itemYes = (
+            text: $$('editor.field.visibility.helpwithactionfieldnames_yes')
+            value: 1
+          )
+          select_items.push itemYes
+          return select_items
     ]
     maskOptions
 
