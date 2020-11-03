@@ -2,7 +2,6 @@ PLUGIN_NAME = easydb-editor-field-visibility
 
 EASYDB_LIB = easydb-library
 L10N_FILES = l10n/$(PLUGIN_NAME).csv
-L10N2JSON = python $(EASYDB_LIB)/tools/l10n2json.py
 
 INSTALL_FILES = \
 	$(WEB)/l10n/cultures.json \
