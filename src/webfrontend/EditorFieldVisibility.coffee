@@ -115,7 +115,9 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
     that = @
 
     # name of the observed field
-    observedFieldName = @getDataOptions().observedfield
+    observedFieldName = @getDataOptions()?.observedfield
+    if !observedFieldName
+      return
 
     # actual _objecttype
     @objecttype = opts.top_level_data._objecttype
@@ -334,6 +336,7 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
           'custom:base.custom-data-type-gn250.gn250'
           'custom:base.custom-data-type-georef.georef'
           'custom:base.custom-data-type-gazetteer.gazetteer'
+          'custom:base.custom-data-type-iconclass.iconclass'
           'custom:base.custom-data-type-link.link'
           'custom:base.custom-data-type-gvk.gvk'
           'custom:base.custom-data-type-nomisma.nomisma'

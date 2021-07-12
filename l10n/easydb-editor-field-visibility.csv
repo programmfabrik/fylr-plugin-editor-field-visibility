@@ -10,3 +10,4 @@
 ,editor.field.visibility.helpwithactionfieldnames,Hilfe bei den Feldpfaden, Help with the Fieldpaths
 ,editor.field.visibility.helpwithactionfieldnames_no,Nein danke, alles gut, No thanks, everything fine
 ,editor.field.visibility.helpwithactionfieldnames_yes,Ja - zeig mir die Splitter-Feld-Pfade in der Konsole, Yes - show me the splitter-field-paths in the console
+,mask.splitter.panel.spliter_name.editor-field-visibility-end|text,Ende (Feldauswahl-Plugin)
