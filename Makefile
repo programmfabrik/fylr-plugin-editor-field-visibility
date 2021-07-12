@@ -15,7 +15,7 @@ COFFEE_FILES = src/webfrontend/EditorFieldVisibility.coffee
 all: build
 
 include $(EASYDB_LIB)/tools/base-plugins.make
-build: code $(L10N)
+build: code $(L10N) buildinfojson
 
 code: $(JS)
 
