@@ -1,7 +1,7 @@
 plugin:
-  name: easydb-editor-field-visibility
+  name: easydb-editor-field-visibility-plugin
   version: 1.1
-  url: https://github.com/programmfabrik/easydb-editor-field-visibility
+  url: https://github.com/programmfabrik/easydb-editor-field-visibility-plugin
   displayname:
     de-DE: Feldsichtbarkeit auf Basis eines anderen Feldes
     en-US: Fieldvisibility based on another fields value
