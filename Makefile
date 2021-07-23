@@ -1,4 +1,5 @@
 PLUGIN_NAME = easydb-editor-field-visibility
+PLUGIN_PATH = easydb-editor-field-visibility-plugin
 
 EASYDB_LIB = easydb-library
 L10N_FILES = l10n/$(PLUGIN_NAME).csv
