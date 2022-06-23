@@ -388,6 +388,8 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
     for field in linkedField.mask.fields
       if field.kind == 'field'
         newOptions.push @__getOptionFromField(field)
+      if field.kind == 'link'
+        newOptions.push @__getOptionFromField(field)
       if field.kind == 'linked-table'
         newOptions = newOptions.concat @__getOptionsFromLinkedTable(field)
     return newOptions
@@ -415,6 +417,7 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
         if field.kind == 'field'
           fieldOptions.push @__getOptionFromField(field)
         if field.kind == 'link'
+          console.log field
           fieldOptions.push @__getOptionFromField(field)
         if field.kind == 'linked-table'
           test = @__getOptionsFromLinkedTable(field)
