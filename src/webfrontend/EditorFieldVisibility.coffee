@@ -210,6 +210,19 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
       if observedFieldValue == ''
         observedFieldValue = 'false'
 
+    #########################################
+    # observedfield: if columnType == 'link' (interal objecttype)
+    #########################################
+    if columnType == 'link'
+      observedFieldValueString = observedField._field.getDataAsString(observedField._data, observedField._top_level_data)
+      if observedFieldValueString
+        observedFieldValueObject = JSON.parse observedFieldValueString
+        globalObjId = observedFieldValueObject?._global_object_id
+        idParts = globalObjId.split '@'
+        observedFieldValue = idParts[0]
+      #if observedFieldValue == ''
+      #  observedFieldValue = 'false'
+
     ##################################################################################
     # if observedFieldValue is empty --> hide all fields, except the observed field
     ##################################################################################
@@ -400,6 +413,8 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
       fields = @opts.maskEditor.opts.schema.fields
       for field in fields
         if field.kind == 'field'
+          fieldOptions.push @__getOptionFromField(field)
+        if field.kind == 'link'
           fieldOptions.push @__getOptionFromField(field)
         if field.kind == 'linked-table'
           test = @__getOptionsFromLinkedTable(field)
