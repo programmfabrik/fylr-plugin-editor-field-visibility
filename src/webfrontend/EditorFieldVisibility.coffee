@@ -120,7 +120,7 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
       return
 
     # actual _objecttype
-    @objecttype = opts.top_level_data._objecttype
+    @objecttype = opts.top_level_data?._objecttype
 
     @splitterFieldNames = []
 
