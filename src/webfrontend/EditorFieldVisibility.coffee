@@ -231,7 +231,7 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
         # dont hide the observed field
         if actionField.name != observedFieldName
           # dont hide a nested-block, if observedField is in that nested
-          if observedFieldName.indexOf(actionField.name) == -1
+          if observedFieldName.indexOf(actionField.name) == -1 || actionField.type != 'block'
             that.hideAndClearActionField(actionField)
 
     ##################################################################################
