@@ -7,7 +7,7 @@ developers.
 # fylr-editor-visibility-controller
 Custom Mask Splitter to hide fields in Editor, depending on another fields value. Right now, the triggerfield must be a custom-data-type-dante or a boolean-field
 
-This is a plugin for [fylr](https://documentation.fylr.cloud/docs) with MaskSplitter `EditorFieldVisibility`.
+This is a plugin for [fylr](https://documentation.fylr.cloud/docs) with MaskSplitter `EditorVisibilityController`.
 
 <img src="https://raw.githubusercontent.com/programmfabrik/fylr-editor-visibility-controller/master/src/images/example1.gif" />
 <img src="https://raw.githubusercontent.com/programmfabrik/fylr-editor-visibility-controller/master/src/images/example2.gif" />
