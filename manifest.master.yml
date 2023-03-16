@@ -1,0 +1,13 @@
+plugin:
+  name: easydb-editor-field-visibility
+  version: 2.0
+  url: https://github.com/programmfabrik/fylr-editor-field-visibility-plugin
+  displayname:
+    de-DE: Feldsichtbarkeit auf Basis eines anderen Feldes
+    en-US: Fieldvisibility based on another fields value
+  info:
+    de-DE: Custom Mask Splitter to show and/or hide fields in Editor, depending on other fields.
+    en-US: Custom Mask Splitter to show and/or hide fields in Editor, depending on other fields.
+  l10n: l10n/fylr-editor-field-visibility.csv
+  webfrontend:
+    url: fylr-editor-field-visibility.js
