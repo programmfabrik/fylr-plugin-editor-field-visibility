@@ -9,8 +9,8 @@ Custom Mask Splitter to hide fields in Editor, depending on another fields value
 
 This is a plugin for [fylr](https://documentation.fylr.cloud/docs) with MaskSplitter `EditorFieldVisibility`.
 
-<img src="https://github.com/programmfabrik/fylr-editor-field-visibility/blob/master/examples/images/example1.gif" />
-<img src="https://github.com/programmfabrik/fylr-editor-field-visibility/blob/master/examples/images/example2.gif" />
+<img src="https://github.com/programmfabrik/fylr-editor-field-visibility/blob/master/src/images/example1.gif" />
+<img src="https://github.com/programmfabrik/fylr-editor-field-visibility/blob/master/src/images/example2.gif" />
 
 ## installation
 
