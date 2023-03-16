@@ -4,13 +4,21 @@ Programmfabrik GmbH. Please use the github issue tracking to report bugs
 and self organize bug fixing. Feel free to directly contact the committing
 developers.
 
-# easydb-editor-field-visibility
+# fylr-editor-field-visibility
 Custom Mask Splitter to hide fields in Editor, depending on another fields value. Right now, the triggerfield must be a custom-data-type-dante or a boolean-field
 
-This is a plugin for [easyDB 5](http://5.easydb.de/) with MaskSplitter `EditorFieldSelection`.
+This is a plugin for [fylr](https://documentation.fylr.cloud/docs) with MaskSplitter `EditorFieldVisibility`.
 
-<img src="https://github.com/programmfabrik/easydb-editor-field-visibility/blob/master/examples/images/example1.gif" />
-<img src="https://github.com/programmfabrik/easydb-editor-field-visibility/blob/master/examples/images/example2.gif" />
+<img src="https://github.com/programmfabrik/fylr-editor-field-visibility/blob/master/examples/images/example1.gif" />
+<img src="https://github.com/programmfabrik/fylr-editor-field-visibility/blob/master/examples/images/example2.gif" />
+
+## installation
+
+The latest version of this plugin can be found [here](https://github.com/programmfabrik/fylr-editor-field-visibility/releases/latest/download/EditorFieldVisibility.zip).
+
+The ZIP can be downloaded and installed using the plugin manager, or used directly (recommended).
+
+Github has an overview page to get a list of [all release](https://github.com/programmfabrik/fylr-editor-field-visibility/releases/).
 
 ## configuration
 
