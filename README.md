@@ -4,21 +4,21 @@ Programmfabrik GmbH. Please use the github issue tracking to report bugs
 and self organize bug fixing. Feel free to directly contact the committing
 developers.
 
-# fylr-editor-visibility-controller
+# fylr-editor-field-visibility
 Custom Mask Splitter to hide fields in Editor, depending on another fields value. Right now, the triggerfield must be a custom-data-type-dante or a boolean-field
 
 This is a plugin for [fylr](https://documentation.fylr.cloud/docs) with MaskSplitter `EditorVisibilityController`.
 
-<img src="https://raw.githubusercontent.com/programmfabrik/fylr-editor-visibility-controller/master/src/images/example1.gif" />
-<img src="https://raw.githubusercontent.com/programmfabrik/fylr-editor-visibility-controller/master/src/images/example2.gif" />
+<img src="https://raw.githubusercontent.com/programmfabrik/editor-field-visibility/master/src/images/example1.gif" />
+<img src="https://raw.githubusercontent.com/programmfabrik/editor-field-visibility/master/src/images/example2.gif" />
 
 ## installation
 
-The latest version of this plugin can be found [here](https://github.com/programmfabrik/fylr-editor-visibility-controller/releases/latest/download/FylrEditorVisibilityController.zip).
+The latest version of this plugin can be found [here](https://github.com/programmfabrik/editor-field-visibility/releases/latest/download/FylrEditorFieldVisibility.zip).
 
 The ZIP can be downloaded and installed using the plugin manager, or used directly (recommended).
 
-Github has an overview page to get a list of [all release](https://github.com/programmfabrik/fylr-editor-visibility-controller/releases/).
+Github has an overview page to get a list of [all release](https://github.com/programmfabrik/editor-field-visibility/releases/).
 
 ## configuration
 
