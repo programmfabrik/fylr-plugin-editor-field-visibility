@@ -14,7 +14,7 @@ This is a plugin for [fylr](https://documentation.fylr.cloud/docs) with MaskSpli
 
 ## installation
 
-The latest version of this plugin can be found [here](https://github.com/programmfabrik/fylr-editor-field-visibility/releases/latest/download/FylrEditorFieldVisibility.zip).
+The latest version of this plugin can be found [here](https://github.com/programmfabrik/fylr-editor-field-visibility/releases/latest/download/EditorFieldVisibility.zip).
 
 The ZIP can be downloaded and installed using the plugin manager, or used directly (recommended).
 
