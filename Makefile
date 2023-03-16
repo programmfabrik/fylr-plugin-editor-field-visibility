@@ -1,10 +1,6 @@
 ZIP_NAME ?= "EditorFieldVisibility.zip"
 
-PLUGIN_NAME = easydb-editor-field-visibility
-PLUGIN_PATH = easydb-editor-field-visibility-plugin
-
-EASYDB_LIB = easydb-library
-L10N_FILES = l10n/$(PLUGIN_NAME).csv
+PLUGIN_NAME = editor-field-visibility
 
 COFFEE_FILES = EditorFieldVisibility.coffee
 
@@ -23,13 +19,25 @@ build: clean ## clean, compile, copy files to build folder
 					mkdir -p src/tmp # build code from coffee
 					cp src/webfrontend/*.coffee src/tmp
 					cd src/tmp && coffee -b --compile ${COFFEE_FILES} # bare-parameter is obligatory!
-					cat src/tmp/*.js > build/$(PLUGIN_NAME)/webfrontend/fylr-editor-field-visibility.js
+					cat src/tmp/*.js > build/$(PLUGIN_NAME)/webfrontend/EditorFieldVisibility.js
 
 					rm -rf src/tmp # clean tmp
 
-					cp l10n/fylr-editor-field-visibility.csv build/$(PLUGIN_NAME)/l10n/fylr-editor-field-visibility.csv # copy l10n
+					cp l10n/EditorFieldVisibility.csv build/$(PLUGIN_NAME)/l10n/EditorFieldVisibility.csv # copy l10n
 
 					cp manifest.master.yml build/$(PLUGIN_NAME)/manifest.yml # copy manifest
+
+					# buildinfo
+					repo=`git remote get-url origin | sed -e 's/\.git$$//' -e 's#.*[/\\]##'` ;\
+					rev=`git show --no-patch --format=%H` ;\
+					lastchanged=`git show --no-patch --format=%ad --date=format:%Y-%m-%dT%T%z` ;\
+					builddate=`date +"%Y-%m-%dT%T%z"` ;\
+					echo '{' > build/$(PLUGIN_NAME)/build-info.json ;\
+					echo '  "repository": "'$$repo'",' >> build/$(PLUGIN_NAME)/build-info.json ;\
+					echo '  "rev": "'$$rev'",' >> build/$(PLUGIN_NAME)/build-info.json ;\
+					echo '  "lastchanged": "'$$lastchanged'",' >> build/$(PLUGIN_NAME)/build-info.json ;\
+					echo '  "builddate": "'$$builddate'"' >> build/$(PLUGIN_NAME)/build-info.json ;\
+					echo '}' >> build/$(PLUGIN_NAME)/build-info.json
 
 clean: ## clean
 				rm -rf build

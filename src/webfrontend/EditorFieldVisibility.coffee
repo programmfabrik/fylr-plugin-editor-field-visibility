@@ -1,10 +1,4 @@
-###
-  TODO TODO # TODO:
-
-  bestehende Probleme:
-  - wenn in einem Wiederholblock keine felder mehr sind, soll der ganze block weg sein, auch der Plus-Button etc..
-###
-class ez5.EditorFieldVisibility extends CustomMaskSplitter
+class EditorFieldVisibility extends CustomMaskSplitter
 
   isSimpleSplit: ->
     false
@@ -464,4 +458,5 @@ class ez5.EditorFieldVisibility extends CustomMaskSplitter
   trashable: ->
     true
 CUI.ready =>
-  MaskSplitter.plugins.registerPlugin(ez5.EditorFieldVisibility)
+  console.error "registering EditorFieldVisibility"
+  MaskSplitter.plugins.registerPlugin(EditorFieldVisibility)
