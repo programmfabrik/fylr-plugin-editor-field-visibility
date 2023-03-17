@@ -204,7 +204,12 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName)
 
-    return innerFields
+    div = CUI.dom.element("div", class: "fylr-editor-field-visibility")
+    if @getDataOptions()?.debugwithborder
+      CUI.dom.setStyle div,
+        border: "4px dashed #CCC"
+
+    return CUI.dom.append(div, innerFields)
 
   ##########################################################################################
   # show or hide fields, depending on jsonMap and oberservedfield-value
@@ -482,6 +487,26 @@ class EditorFieldVisibility extends CustomMaskSplitter
           select_items.push itemNo
           itemYes = (
             text: $$('editor.field.visibility.helpwithactionfieldnames_yes')
+            value: 1
+          )
+          select_items.push itemYes
+          return select_items
+      ,
+        form:
+          label: $$('editor.field.visibility.debugwithborder')
+        type: CUI.Select
+        undo_and_changed_support: false
+        name: 'debugwithborder'
+        empty_text: $$('editor.field.visibility.debugwithborder_no')
+        options: (thisSelect) =>
+          select_items = []
+          itemNo = (
+            text: $$('editor.field.visibility.debugwithborder_no')
+            value: 0
+          )
+          select_items.push itemNo
+          itemYes = (
+            text: $$('editor.field.visibility.debugwithborder_yes')
             value: 1
           )
           select_items.push itemYes

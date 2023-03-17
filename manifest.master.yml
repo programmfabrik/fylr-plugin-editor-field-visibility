@@ -11,5 +11,6 @@ plugin:
   l10n: l10n/EditorFieldVisibility.csv
   webfrontend:
     url: EditorFieldVisibility.js
+    css: EditorFieldVisibility.css
 
 base_url_prefix: "webfrontend"

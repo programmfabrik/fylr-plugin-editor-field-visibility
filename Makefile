@@ -25,6 +25,8 @@ build: clean ## clean, compile, copy files to build folder
 
 					cp l10n/EditorFieldVisibility.csv build/$(PLUGIN_NAME)/l10n/EditorFieldVisibility.csv # copy l10n
 
+					cp src/webfrontend/css/EditorFieldVisibility.css build/$(PLUGIN_NAME)/webfrontend/EditorFieldVisibility.css # copy css
+
 					cp manifest.master.yml build/$(PLUGIN_NAME)/manifest.yml # copy manifest
 
 					# buildinfo
