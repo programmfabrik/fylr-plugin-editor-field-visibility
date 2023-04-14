@@ -46,30 +46,23 @@ class EditorFieldVisibility extends CustomMaskSplitter
     fieldnames = []
     for fieldName, field of optsData
       fieldnames.push fieldName
-    #console.error "fieldnamesCHECKER", fieldnames
 
     # is array?
     for fieldName, field of optsData
-      #console.log "fieldName", fieldName
       if ! fieldName.startsWith '_version'
         #########################################
         # NESTED as field
         # if name contains "_nested:" and contains ":rendered", if contains fields below
         fieldNameOriginal = fieldName
-        # WARUM TRIFFT DAS HIER NICHT AUF VOLL VIELE zu, sondern nur auf die beiden?
         if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') > -1)
-          #console.error "hiiiiiier"
           cleanedFieldName = fieldName.replace(/_nested:/g, '')
           cleanedFieldName = cleanedFieldName.replace(/:rendered/g, '')
-          #console.warn "cleanedFieldName", cleanedFieldName
           if prefix != ''
             fieldName = prefix + '.' + cleanedFieldName
           else
             fieldName = cleanedFieldName
           fieldName = @objecttype + '.' + fieldName
-          #console.warn "fieldName", fieldName
           if splitterFieldNames.indexOf(fieldName) != -1
-            #console.log "PUSH 1111: " + fieldName
             fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement()
           # it is the block and not a field
           else
@@ -95,12 +88,9 @@ class EditorFieldVisibility extends CustomMaskSplitter
             fieldName = prefix + '.' + fieldName.replace(':rendered', '')
           else
             fieldName = fieldName.replace(':rendered', '')
-          #console.log "1fieldName", fieldName
           if ! field?.opts?.field?.__dbg_full_name
             continue
           fieldName = field.opts.field.__dbg_full_name
-          #console.log "2fieldName", fieldName
-          #console.log "field.opts.field", field.opts.field
           fieldName = fieldName.replace(/_nested:/g, '')
           fieldNameParts = fieldName.split('.')
           lastPartOfFieldName = fieldNameParts.pop()
@@ -110,7 +100,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
               isCustomType = true
             else
               isCustomType = false
-            #console.log "PUSH 444: " + fieldName
             fieldList.push 'dataTarget' : lastPartOfFieldName, 'dataReference' : optsData, 'name' : fieldName, 'field' : field, 'element' : field.getElement(), 'type' : fieldType, 'isCustomType' : isCustomType
 
     return fieldList
@@ -125,7 +114,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     # name of the observed field
     observedFieldName = @getDataOptions()?.observedfield
-    #console.warn "observedFieldName", observedFieldName
     if !observedFieldName
       return
 
@@ -136,7 +124,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     # get inner fields
     innerFields = @renderInnerFields(opts)
-    #console.warn "innerFields", innerFields
     # no action in detail-mode
     if opts.mode == "detail"
       return innerFields
@@ -161,26 +148,18 @@ class EditorFieldVisibility extends CustomMaskSplitter
     if not innerSplitterFields
       return innerFields
 
-    #console.log "innerSplitterFields", innerSplitterFields
-
     splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
-    #console.warn "splitterFieldNames", splitterFieldNames
 
     splitterFieldNamesFlat = @__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
 
     # DAS splitterFieldNamesFlat ist das gleiche wie actionsfields von unten?
     # Dann müsste ich das unten in __manageVisibilitys nicht noch einmal machen!!!
 
-    #console.error "splitterFieldNamesFlat", splitterFieldNamesFlat
-
     for splitterField in splitterFieldNamesFlat
       if splitterField.name == observedFieldName
         # get type of observed field
         columnType = splitterField.type
         observedField = splitterField.field
-
-    #console.log "columnType", columnType
-    #console.log "observedField", observedField
 
     CUI.Events.listen
       type: ["data-changed"]
@@ -207,18 +186,10 @@ class EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   __manageVisibilitys: (opts, columnType, observedField, jsonMap, observedFieldName, actionFields) ->
-    #console.log "f: __manageVisibilitys"
-    #console.log "observedField", observedField.opts.field.__dbg_full_name
     that = @
 
     # get Value from observed field
     observedFieldValue = ''
-
-    # make a list of field's names, which are in the splitter and may be shown or hidden
-    #actionFields = []
-    #console.error "opts.data", opts.data
-    #actionFields = @__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
-    #actionFields = splitterFieldNamesFlat
 
     #########################################
     # observedfield: if columnType == CustomDataTypeDANTE
@@ -240,6 +211,8 @@ class EditorFieldVisibility extends CustomMaskSplitter
       observedFieldValue = observedField._field.getDataAsString(observedField._data, observedField._top_level_data)
       if observedFieldValue == ''
         observedFieldValue = 'false'
+      else
+        observedFieldValue = 'true'
 
     #########################################
     # observedfield: if columnType == 'link' (interal objecttype)
@@ -251,8 +224,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
         globalObjId = observedFieldValueObject?._global_object_id
         idParts = globalObjId.split '@'
         observedFieldValue = idParts[0]
-      #if observedFieldValue == ''
-      #  observedFieldValue = 'false'
 
     ##################################################################################
     # help activated? Then echo all actionfield.names to console
@@ -278,22 +249,13 @@ class EditorFieldVisibility extends CustomMaskSplitter
     # if observed field is not empty, show / hide fields in splitter, depending on json-map
     ##################################################################################
     else
-      #console.warn "observedFieldValue", observedFieldValue
-      #console.warn "observedFieldName", observedFieldName
-      #console.warn "jsonMap", jsonMap
-
       # check if a mapping exists in jsonmap for the given observedfieldvalue
       jsonMatchedMappingFields = false;
       for jsonMapEntryName, jsonMapValue of jsonMap
-        #console.log "jsonMapEntryName", jsonMapEntryName
-        #console.log "jsonMapValue", jsonMapValue
         if jsonMapValue?.value?.trim() == observedFieldValue
           if jsonMapValue?.fields
             jsonMatchedMappingFields = jsonMapValue.fields
             break;
-
-      #console.warn jsonMatchedMappingFields
-      #console.warn typeof jsonMatchedMappingFields
 
       # go through all fields in splitter and show or hide, depending on mapping
       for actionField in actionFields
@@ -312,8 +274,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   hideAndClearActionField: (actionField) ->
-    #console.error actionField
-    #console.log("hide field: " + actionField.name)
     domInput = CUI.dom.matchSelector(actionField.element, ".cui-data-field")[0]
     domData = CUI.dom.data(domInput, "element")
 
@@ -336,8 +296,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
                     actionField.dataReference[actionField.dataTarget][deletionValue] = ''
                   else
                     delete actionField.dataReference[actionField.dataTarget][deletionValue]
-
-        #console.error rowType,  actionField.type
 
         ##################################
         # hide multifield
