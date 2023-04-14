@@ -40,7 +40,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
       resultList.push key
     return resultList
 
-  __getFlatListOfAffectedSplitterFields: (optsData, prefix = '') ->
+  __getFlatListOfAffectedSplitterFields: (optsData, prefix = '', splitterFieldNames) ->
     fieldList = []
 
     fieldnames = []
@@ -68,21 +68,12 @@ class EditorFieldVisibility extends CustomMaskSplitter
             fieldName = cleanedFieldName
           fieldName = @objecttype + '.' + fieldName
           #console.warn "fieldName", fieldName
-          if @splitterFieldNames.indexOf(fieldName) != -1
+          if splitterFieldNames.indexOf(fieldName) != -1
             #console.log "PUSH 1111: " + fieldName
             fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement()
           # it is the block and not a field
           else
-            # Es muss aber trotzdem irgendwie in splitterFieldNames vorkommen!?!?
-            #console.log "PUSH 222"
-            #console.warn "optsData", optsData
-            #console.warn "@splitterFieldNames", @splitterFieldNames
-            #console.warn "@splitterFieldNames.indexOf(fieldName)", @splitterFieldNames.indexOf(fieldName)
-            #console.log "fieldName", fieldName
-            #console.log "fieldNameOriginal", fieldNameOriginal
-            #console.log "cleanedFieldName", cleanedFieldName
-            if @splitterFieldNames.includes(fieldName)
-              fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement(), 'type' : 'block'
+            fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement(), 'type' : 'block'
 
         #########################################
         # NESTED
@@ -94,7 +85,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
               newPrefix = prefix + '.' + cleanedFieldName
             else
               newPrefix = cleanedFieldName
-            fields = @__getFlatListOfAffectedSplitterFields(fieldEntry, newPrefix)
+            fields = @__getFlatListOfAffectedSplitterFields(fieldEntry, newPrefix, splitterFieldNames)
             fieldList = fieldList.concat fields
 
         #########################################
@@ -113,7 +104,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
           fieldName = fieldName.replace(/_nested:/g, '')
           fieldNameParts = fieldName.split('.')
           lastPartOfFieldName = fieldNameParts.pop()
-          if @splitterFieldNames.indexOf(fieldName) != -1
+          if splitterFieldNames.indexOf(fieldName) != -1
             fieldType = field._field.ColumnSchema.type
             if fieldType.indexOf('custom-data-type') > 0
               isCustomType = true
@@ -141,7 +132,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
     # actual _objecttype
     @objecttype = opts.top_level_data?._objecttype
 
-    @splitterFieldNames = []
+    splitterFieldNames = []
 
     # get inner fields
     innerFields = @renderInnerFields(opts)
@@ -172,17 +163,17 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     #console.log "innerSplitterFields", innerSplitterFields
 
-    @splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
-    #console.warn "splitterFieldNames", @splitterFieldNames
+    splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
+    #console.warn "splitterFieldNames", splitterFieldNames
 
-    @splitterFieldNamesFlat = @__getFlatListOfAffectedSplitterFields(opts.data)
+    splitterFieldNamesFlat = @__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
 
     # DAS splitterFieldNamesFlat ist das gleiche wie actionsfields von unten?
     # Dann müsste ich das unten in __manageVisibilitys nicht noch einmal machen!!!
 
-    #console.error "@splitterFieldNamesFlat", @splitterFieldNamesFlat
+    #console.error "splitterFieldNamesFlat", splitterFieldNamesFlat
 
-    for splitterField in @splitterFieldNamesFlat
+    for splitterField in splitterFieldNamesFlat
       if splitterField.name == observedFieldName
         # get type of observed field
         columnType = splitterField.type
@@ -195,14 +186,14 @@ class EditorFieldVisibility extends CustomMaskSplitter
       type: ["data-changed"]
       node: innerFields[0]
       call: (ev, info) =>
-        @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName)
+        @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
     CUI.Events.listen
       type: ["editor-changed"]
       call: (ev, info) =>
-        @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName)
+        @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
-    @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName)
+    @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
     div = CUI.dom.element("div", class: "fylr-editor-field-visibility")
     if @getDataOptions()?.debugwithborder
@@ -215,7 +206,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
   # show or hide fields, depending on jsonMap and oberservedfield-value
   ##########################################################################################
 
-  __manageVisibilitys: (opts, columnType, observedField, jsonMap, observedFieldName) ->
+  __manageVisibilitys: (opts, columnType, observedField, jsonMap, observedFieldName, actionFields) ->
     #console.log "f: __manageVisibilitys"
     #console.log "observedField", observedField.opts.field.__dbg_full_name
     that = @
@@ -224,10 +215,10 @@ class EditorFieldVisibility extends CustomMaskSplitter
     observedFieldValue = ''
 
     # make a list of field's names, which are in the splitter and may be shown or hidden
-    actionFields = []
+    #actionFields = []
     #console.error "opts.data", opts.data
-    #actionFields = @__getFlatListOfAffectedSplitterFields(opts.data)
-    actionFields = @splitterFieldNamesFlat
+    #actionFields = @__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
+    #actionFields = splitterFieldNamesFlat
 
     #########################################
     # observedfield: if columnType == CustomDataTypeDANTE
