@@ -217,6 +217,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
   __manageVisibilitys: (opts, columnType, observedField, jsonMap, observedFieldName) ->
     #console.log "f: __manageVisibilitys"
+    #console.log "observedField", observedField.opts.field.__dbg_full_name
     that = @
 
     # get Value from observed field
@@ -263,6 +264,15 @@ class EditorFieldVisibility extends CustomMaskSplitter
       #  observedFieldValue = 'false'
 
     ##################################################################################
+    # help activated? Then echo all actionfield.names to console
+    ##################################################################################
+    if @getDataOptions()?.helpwithactionfieldnames == 1
+      console.warn "List of actionfield-path-names inside the splitter:"
+      for actionField in actionFields
+        if actionField.name != observedFieldName
+          console.log actionField.name
+
+    ##################################################################################
     # if observedFieldValue is empty --> hide all fields, except the observed field
     ##################################################################################
     if CUI.util.isEmpty(observedFieldValue) # || CUI.util.isEmpty(jsonMap[observedFieldValue]
@@ -293,13 +303,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
       #console.warn jsonMatchedMappingFields
       #console.warn typeof jsonMatchedMappingFields
-
-      # help activated? Then echo all actionfield.names in console
-      if @getDataOptions()?.helpwithactionfieldnames == 1
-        console.warn "List of actionfield-path-names inside the splitter:"
-        for actionField in actionFields
-          if actionField.name != observedFieldName
-            console.log actionField.name
 
       # go through all fields in splitter and show or hide, depending on mapping
       for actionField in actionFields
