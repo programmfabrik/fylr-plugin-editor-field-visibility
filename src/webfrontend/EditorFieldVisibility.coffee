@@ -275,8 +275,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
   hideAndClearActionField: (actionField) ->
 
-    console.log "actionField", actionField
-
     domInput = CUI.dom.matchSelector(actionField.element, ".cui-data-field")[0]
     domData = CUI.dom.data(domInput, "element")
 
@@ -286,10 +284,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
       rowType = ''
 
     # hide field
-    console.log "domInput", domInput
-    console.log "domData", domData
-
-    console.log "actionField.element", actionField.element
     CUI.dom.hideElement(actionField.element)
 
     # clear value of field
@@ -302,14 +296,12 @@ class EditorFieldVisibility extends CustomMaskSplitter
                   if actionField.type == 'text_l10n' || actionField.type == 'text_l10n_oneline'
                     actionField.dataReference[actionField.dataTarget][deletionValue] = ''
                   else
-                    delete actionField.dataReference[actionField.dataTarget][deletionValue]
+                    actionField.dataReference[actionField.dataTarget][deletionValue] = null
+              if actionField.dataReference[actionField.dataTarget].hasOwnProperty('conceptURI')
+                actionField.dataReference[actionField.dataTarget] = null
 
         ##################################
-        # hide multifield
-        ##################################
-
-        ##################################
-        # easy to clear values
+        # clear base-fields
         ##################################
         easyTypes =
           'Input' : ''
@@ -334,36 +326,18 @@ class EditorFieldVisibility extends CustomMaskSplitter
         ##################################
         # clear custom-Types
         ##################################
-        customDataTypes = [
-          'custom:base.custom-data-type-dante.dante'
-          'custom:base.custom-data-type-geonames.geonames'
-          'custom:base.custom-data-type-getty.getty'
-          'custom:base.custom-data-type-gnd.gnd'
-          'custom:base.custom-data-type-gn250.gn250'
-          'custom:base.custom-data-type-georef.georef'
-          'custom:base.custom-data-type-gazetteer.gazetteer'
-          'custom:base.custom-data-type-iconclass.iconclass'
-          'custom:base.custom-data-type-link.link'
-          'custom:base.custom-data-type-gvk.gvk'
-          'custom:base.custom-data-type-nomisma.nomisma'
-        ]
-        if actionField.type in customDataTypes
-
-          actionField.field.setChanges()
-          actionField.field.initOpts()
-          #actionField.field.reload()
-          #actionField.reload()
-
-          #if domData
-          #  domData.unsetData()
-          domData.setValue({})
-          domData.reload()
-          console.log "domData", domData
+        if actionField.type.startsWith('custom:')
 
           node = CUI.dom.matchSelector(actionField.element, ".customPluginEditorLayout")
-          if ! node
+          # if dante-dropdown-mode
+          if node.length == 0
             node = CUI.dom.matchSelector(actionField.element, ".dante_InlineSelect")
+            CUI.Events.trigger
+              type: 'data-changed'
+              node: node[0]
+              bubble: true
 
+          # call plugins, which use syntax from commons.coffee (customPluginEditorLayout)
           if node
             CUI.Events.registerEvent
               type: "custom-deleteDataFromPlugin"
