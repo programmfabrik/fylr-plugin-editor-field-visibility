@@ -274,6 +274,9 @@ class EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   hideAndClearActionField: (actionField) ->
+
+    console.log "actionField", actionField
+
     domInput = CUI.dom.matchSelector(actionField.element, ".cui-data-field")[0]
     domData = CUI.dom.data(domInput, "element")
 
@@ -283,6 +286,10 @@ class EditorFieldVisibility extends CustomMaskSplitter
       rowType = ''
 
     # hide field
+    console.log "domInput", domInput
+    console.log "domData", domData
+
+    console.log "actionField.element", actionField.element
     CUI.dom.hideElement(actionField.element)
 
     # clear value of field
@@ -344,9 +351,14 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
           actionField.field.setChanges()
           actionField.field.initOpts()
+          #actionField.field.reload()
+          #actionField.reload()
 
-          if domData
-            domData.unsetData()
+          #if domData
+          #  domData.unsetData()
+          domData.setValue({})
+          domData.reload()
+          console.log "domData", domData
 
           node = CUI.dom.matchSelector(actionField.element, ".customPluginEditorLayout")
           if ! node
