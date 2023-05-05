@@ -332,16 +332,16 @@ class EditorFieldVisibility extends CustomMaskSplitter
           # if dante-dropdown-mode
           if node.length == 0
             node = CUI.dom.matchSelector(actionField.element, ".dante_InlineSelect")
-            CUI.Events.trigger
-              type: 'data-changed'
-              node: node[0]
-              bubble: true
+            #CUI.Events.trigger
+            #  type: 'data-changed'
+            #  node: node[0]
+            #  bubble: true
 
           # call plugins, which use syntax from commons.coffee (customPluginEditorLayout)
           if node
-            CUI.Events.registerEvent
-              type: "custom-deleteDataFromPlugin"
-              bubble: false
+            #CUI.Events.registerEvent
+            #  type: "custom-deleteDataFromPlugin"
+            #  bubble: false
             CUI.Events.trigger
               type: 'custom-deleteDataFromPlugin'
               node: node[0]
