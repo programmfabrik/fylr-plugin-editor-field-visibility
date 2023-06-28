@@ -1,5 +1,15 @@
 class EditorFieldVisibility extends CustomMaskSplitter
 
+  __uniqueArray: (arr) ->
+    a = []
+    i = 0
+    l = arr.length
+    while i < l
+      if a.indexOf(arr[i]) == -1 and arr[i] != ''
+        a.push arr[i]
+      i++
+    a
+
   isSimpleSplit: ->
     false
 
@@ -230,9 +240,27 @@ class EditorFieldVisibility extends CustomMaskSplitter
     ##################################################################################
     if @getDataOptions()?.helpwithactionfieldnames == 1
       console.warn "List of actionfield-path-names inside the splitter:"
+      listOfFlatFields = []
       for actionField in actionFields
         if actionField.name != observedFieldName
           console.log actionField.name
+          listOfFlatFields.push actionField.name
+          
+      jsonFieldList = []
+      for jsonMapEntryName, jsonMapValue of jsonMap
+          if jsonMapValue?.fields
+            for jsonFieldKey, jsonFieldName of jsonMapValue.fields
+              jsonFieldList.push jsonFieldName
+      jsonFieldList = that.__uniqueArray(jsonFieldList)
+
+      console.warn "List of all JSON-Fields, which are not available as field in active mask"
+      for jsonFieldListKey, jsonFieldListName of jsonFieldList
+        for actionField in actionFields
+          if actionField.name == jsonFieldListName
+            jsonFieldList[jsonFieldListKey] = null
+      jsonFieldList = jsonFieldList.filter (value) -> value isnt null
+      console.log "jsonFieldList", jsonFieldList
+
 
     ##################################################################################
     # if observedFieldValue is empty --> hide all fields, except the observed field
