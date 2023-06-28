@@ -119,7 +119,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   renderField: (opts) ->
-    #console.error "f:renderField"
     that = @
 
     # name of the observed field
@@ -162,9 +161,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     splitterFieldNamesFlat = @__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
 
-    # DAS splitterFieldNamesFlat ist das gleiche wie actionsfields von unten?
-    # Dann müsste ich das unten in __manageVisibilitys nicht noch einmal machen!!!
-
     for splitterField in splitterFieldNamesFlat
       if splitterField.name == observedFieldName
         # get type of observed field
@@ -172,13 +168,8 @@ class EditorFieldVisibility extends CustomMaskSplitter
         observedField = splitterField.field
 
     CUI.Events.listen
-      type: ["data-changed"]
-      node: innerFields[0]
-      call: (ev, info) =>
-        @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
-
-    CUI.Events.listen
-      type: ["editor-changed"]
+      type: ["data-changed", "editor-changed"]
+      node: observedField.element
       call: (ev, info) =>
         @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
@@ -209,8 +200,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
       if ! CUI.util.isEmpty(dataAsString)
         dataAsJson = JSON.parse dataAsString
         observedFieldValue = dataAsJson.conceptURI
-        if observedFieldValue
-          observedFieldValue = observedFieldValue.replace('https', 'http')
       else
         observedFieldValue = null
 
@@ -245,7 +234,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
         if actionField.name != observedFieldName
           console.log actionField.name
           listOfFlatFields.push actionField.name
-          
+
       jsonFieldList = []
       for jsonMapEntryName, jsonMapValue of jsonMap
           if jsonMapValue?.fields
@@ -253,13 +242,13 @@ class EditorFieldVisibility extends CustomMaskSplitter
               jsonFieldList.push jsonFieldName
       jsonFieldList = that.__uniqueArray(jsonFieldList)
 
-      console.warn "List of all JSON-Fields, which are not available as field in active mask"
+      console.warn "List of all JSON-Fields, which are not available as field in active mask:"
       for jsonFieldListKey, jsonFieldListName of jsonFieldList
         for actionField in actionFields
           if actionField.name == jsonFieldListName
             jsonFieldList[jsonFieldListKey] = null
       jsonFieldList = jsonFieldList.filter (value) -> value isnt null
-      console.log "jsonFieldList", jsonFieldList
+      console.log jsonFieldList
 
 
     ##################################################################################
@@ -302,7 +291,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   hideAndClearActionField: (actionField) ->
-
     domInput = CUI.dom.matchSelector(actionField.element, ".cui-data-field")[0]
     domData = CUI.dom.data(domInput, "element")
 
@@ -357,19 +345,16 @@ class EditorFieldVisibility extends CustomMaskSplitter
         if actionField.type.startsWith('custom:')
 
           node = CUI.dom.matchSelector(actionField.element, ".customPluginEditorLayout")
+
           # if dante-dropdown-mode
           if node.length == 0
             node = CUI.dom.matchSelector(actionField.element, ".dante_InlineSelect")
-            #CUI.Events.trigger
-            #  type: 'data-changed'
-            #  node: node[0]
-            #  bubble: true
+
+          if node.length == 0
+            node = actionField.element
 
           # call plugins, which use syntax from commons.coffee (customPluginEditorLayout)
           if node
-            #CUI.Events.registerEvent
-            #  type: "custom-deleteDataFromPlugin"
-            #  bubble: false
             CUI.Events.trigger
               type: 'custom-deleteDataFromPlugin'
               node: node[0]
