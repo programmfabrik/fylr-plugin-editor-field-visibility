@@ -57,12 +57,16 @@ class EditorFieldVisibility extends CustomMaskSplitter
     for fieldName, field of optsData
       fieldnames.push fieldName
 
+    ignoreList = ['_version', '_in_db', '_row_number']
+
     # is array?
     for fieldName, field of optsData
-      if ! fieldName.startsWith '_version'
+
+      if ignoreList.indexOf(fieldName) == -1
+
         #########################################
-        # NESTED as field
-        # if name contains "_nested:" and contains ":rendered", if contains fields below
+        # NESTED (RenderedField) (the block itself)
+        # if name contains "_nested:" and contains ":rendered"
         fieldNameOriginal = fieldName
         if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') > -1)
           cleanedFieldName = fieldName.replace(/_nested:/g, '')
@@ -71,16 +75,26 @@ class EditorFieldVisibility extends CustomMaskSplitter
             fieldName = prefix + '.' + cleanedFieldName
           else
             fieldName = cleanedFieldName
-          fieldName = @objecttype + '.' + fieldName
+          if ! field?.opts?.field?.FieldSchema?._full_name
+            continue
+          fieldName = field.opts.field.FieldSchema._full_name
           if splitterFieldNames.indexOf(fieldName) != -1
-            fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement()
-          # it is the block and not a field
-          else
             fieldList.push 'name' : fieldName, 'field' : field, 'element' : field.getElement(), 'type' : 'block'
 
         #########################################
-        # NESTED
-        # if name contains "_nested:" and not contains ":rendered", if contains fields below
+        # NESTED (FieldList)
+        # if name contains "_nested:" and not contains ":rendered"
+        # --> List of the Fields in Nested
+        #
+        # example:
+        #
+        # _nested:objekt__ereignisse__materialien (Array)
+        # [0]
+        #      anmerkung: ""
+        #      anmerkung:rendered (Rendered Field)
+        #      lk_dante
+        #      lk_dante:rendered  (Rendered Field)
+        #
         if (fieldName.indexOf('_nested:') > -1) && (fieldName.indexOf(':rendered') == -1)
           for fieldEntry in field
             cleanedFieldName = fieldName.replace(/_nested:/g, '')
@@ -92,7 +106,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
             fieldList = fieldList.concat fields
 
         #########################################
-        # FIELD
+        # FIELD (one rendered field)
         if fieldName.indexOf('_nested:') == -1 && (fieldName.indexOf(':rendered') > -1)
           if prefix != ''
             fieldName = prefix + '.' + fieldName.replace(':rendered', '')
@@ -133,8 +147,9 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     # get inner fields
     innerFields = @renderInnerFields(opts)
+
     # no action in detail-mode
-    if opts.mode == "detail"
+    if opts.mode == "detail" || opts.mode == "expert"
       return innerFields
 
     jsonMap = @getDataOptions().jsonmap
@@ -147,7 +162,8 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     for jsonMapKey, jsonMapEntry of jsonMap
       for fieldsValue, fieldsKey in jsonMapEntry.fields
-        jsonMap[jsonMapKey].fields[fieldsKey] = jsonTargetPath + '.' + jsonMapEntry.fields[fieldsKey]
+        if fieldsValue
+          jsonMap[jsonMapKey].fields[fieldsKey] = jsonTargetPath + '.' + jsonMapEntry.fields[fieldsKey]
 
     # Renderer given?
     fieldsRendererPlain = @__customFieldsRenderer.fields[0]
@@ -159,7 +175,8 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
 
-    splitterFieldNamesFlat = @__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
+    # das "rendered hat überhaupt nichts zu bedeuten für meine Auswertung?!?!?!!!!!"
+    splitterFieldNamesFlat = that.__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
 
     for splitterField in splitterFieldNamesFlat
       if splitterField.name == observedFieldName
@@ -168,19 +185,26 @@ class EditorFieldVisibility extends CustomMaskSplitter
         observedField = splitterField.field
 
     CUI.Events.listen
-      type: ["data-changed", "editor-changed"]
-      node: observedField.element
+      type: ["editor-load"]
       call: (ev, info) =>
-        @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+        that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
-    @__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+    # only trigger if node equals observedfield
+    CUI.Events.listen
+      type: ["data-changed", "editor-changed"]
+      node: observedField.getElement()
+      call: (ev, info) =>
+        that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+
+    that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
     div = CUI.dom.element("div", class: "fylr-editor-field-visibility")
-    if @getDataOptions()?.debugwithborder
+    if that.getDataOptions()?.debugwithborder
       CUI.dom.setStyle div,
         border: "4px dashed #CCC"
 
     return CUI.dom.append(div, innerFields)
+
 
   ##########################################################################################
   # show or hide fields, depending on jsonMap and oberservedfield-value
@@ -230,6 +254,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
     if @getDataOptions()?.helpwithactionfieldnames == 1
       console.warn "List of actionfield-path-names inside the splitter:"
       listOfFlatFields = []
+      console.log "actionFields", actionFields
       for actionField in actionFields
         if actionField.name != observedFieldName
           console.log actionField.name
