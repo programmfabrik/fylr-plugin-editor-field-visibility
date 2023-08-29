@@ -327,6 +327,8 @@ class EditorFieldVisibility extends CustomMaskSplitter
     # hide field
     CUI.dom.hideElement(actionField.element)
 
+    node = actionField.element
+
     # clear value of field
     if domData || actionField.isCustomType
         if actionField?.dataReference
@@ -339,7 +341,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
                   else
                     actionField.dataReference[actionField.dataTarget][deletionValue] = null
               if actionField.dataReference[actionField.dataTarget].hasOwnProperty('conceptURI')
-                actionField.dataReference[actionField.dataTarget] = null
+                actionField.dataReference[actionField.dataTarget] = {}
 
         ##################################
         # clear base-fields
@@ -378,11 +380,14 @@ class EditorFieldVisibility extends CustomMaskSplitter
           if node.length == 0
             node = actionField.element
 
+          if node.length > 0
+            node = node[0]
+
           # call plugins, which use syntax from commons.coffee (customPluginEditorLayout)
           if node
             CUI.Events.trigger
               type: 'custom-deleteDataFromPlugin'
-              node: node[0]
+              node: node
               bubble: false
 
         if (! actionField.isCustomType || domData) && actionField.type != 'text_l10n' && actionField.type != 'text_l10n_oneline'
