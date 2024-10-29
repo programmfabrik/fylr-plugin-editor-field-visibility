@@ -133,10 +133,12 @@ class EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   renderField: (opts) ->
+
     that = @
 
     # name of the observed field
     observedFieldName = @getDataOptions()?.observedfield
+    
     if !observedFieldName
       return
 
@@ -148,8 +150,15 @@ class EditorFieldVisibility extends CustomMaskSplitter
     # get inner fields
     innerFields = @renderInnerFields(opts)
 
-    # no action in detail-mode
-    if opts.mode == "detail" || opts.mode == "expert"
+    fieldsRendererPlain = @__customFieldsRenderer.fields[0]
+
+    # is the splitter in an nested summary?
+    isInSummary = false
+    if opts?.__is_in_nested_summary
+      isInSummary = opts.__is_in_nested_summary
+
+    # no action in detail-mode, expertsearch, nested-summary
+    if opts.mode == "detail" || opts.mode == "expert" || opts.head == 'editor-header' || isInSummary == true
       return innerFields
 
     jsonMap = @getDataOptions().jsonmap
@@ -166,7 +175,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
           jsonMap[jsonMapKey].fields[fieldsKey] = jsonTargetPath + '.' + jsonMapEntry.fields[fieldsKey]
 
     # Renderer given?
-    fieldsRendererPlain = @__customFieldsRenderer.fields[0]
+    
     if fieldsRendererPlain not instanceof FieldsRendererPlain
       return innerFields
     innerSplitterFields = fieldsRendererPlain.getFields() or []
@@ -184,26 +193,27 @@ class EditorFieldVisibility extends CustomMaskSplitter
         columnType = splitterField.type
         observedField = splitterField.field
 
-    CUI.Events.listen
-      type: ["editor-load"]
-      call: (ev, info) =>
-        that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+    if observedField
+      CUI.Events.listen
+        type: ["editor-load"]
+        call: (ev, info) =>
+          that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
-    # only trigger if node equals observedfield
-    CUI.Events.listen
-      type: ["data-changed", "editor-changed"]
-      node: observedField.getElement()
-      call: (ev, info) =>
-        that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+      # only trigger if node equals observedfield
+      CUI.Events.listen
+        type: ["data-changed", "editor-changed"]
+        node: observedField.getElement()
+        call: (ev, info) =>
+          that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
-    that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+      that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
 
-    div = CUI.dom.element("div", class: "fylr-editor-field-visibility")
-    if that.getDataOptions()?.debugwithborder
-      CUI.dom.setStyle div,
-        border: "4px dashed #CCC"
+      div = CUI.dom.element("div", class: "fylr-editor-field-visibility" )
+      if that.getDataOptions()?.debugwithborder
+        CUI.dom.setStyle div,
+          border: "4px dashed #CCC"
 
-    return CUI.dom.append(div, innerFields)
+      return CUI.dom.append(div, innerFields)
 
 
   ##########################################################################################
@@ -317,6 +327,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
   hideAndClearActionField: (actionField) ->
     domInput = CUI.dom.matchSelector(actionField.element, ".cui-data-field")[0]
+    
     domData = CUI.dom.data(domInput, "element")
 
     if domData
