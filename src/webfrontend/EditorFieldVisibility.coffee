@@ -133,7 +133,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
   ##########################################################################################
 
   renderField: (opts) ->
-
     that = @
 
     # name of the observed field
@@ -285,7 +284,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
       jsonFieldList = jsonFieldList.filter (value) -> value isnt null
       console.log jsonFieldList
 
-
     ##################################################################################
     # if observedFieldValue is empty --> hide all fields, except the observed field
     ##################################################################################
@@ -319,6 +317,14 @@ class EditorFieldVisibility extends CustomMaskSplitter
               CUI.dom.showElement(actionField.element)
           else
             CUI.dom.showElement(actionField.element)
+
+    ##################################################################################
+    # trigger autosize (sometimes needed in popover)
+    ##################################################################################
+    CUI.Events.trigger
+        type: "content-resize"
+        node: observedField.getElement()
+    
 
 
   ##################################################################################
