@@ -128,15 +128,32 @@ class EditorFieldVisibility extends CustomMaskSplitter
 
     return fieldList
 
-  ##########################################################################################
-  # main methode
-  ##########################################################################################
 
+  # get the fieldsrenderer
+  __getFieldsRenderer: () ->
+    return @__customFieldsRenderer.fields[0]
+
+  # get the actionfields in splitter
+  __getActionFields: (opts) ->
+    fieldsRendererPlain = @__getFieldsRenderer()
+    innerSplitterFields = fieldsRendererPlain.getFields() or []
+    
+    if not innerSplitterFields
+      return innerFields
+
+    splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
+
+    # das "rendered hat überhaupt nichts zu bedeuten für meine Auswertung?!?!?!!!!!"
+    actionFields = @.__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
+    return actionFields
+
+  # render splitter
   renderField: (opts) ->
     that = @
 
     # name of the observed field
     observedFieldName = @getDataOptions()?.observedfield
+    observedfield = undefined
     
     if !observedFieldName
       return
@@ -149,7 +166,7 @@ class EditorFieldVisibility extends CustomMaskSplitter
     # get inner fields
     innerFields = @renderInnerFields(opts)
 
-    fieldsRendererPlain = @__customFieldsRenderer.fields[0]
+    fieldsRendererPlain = @.__getFieldsRenderer()
 
     # is the splitter in an nested summary?
     isInSummary = false
@@ -174,38 +191,40 @@ class EditorFieldVisibility extends CustomMaskSplitter
           jsonMap[jsonMapKey].fields[fieldsKey] = jsonTargetPath + '.' + jsonMapEntry.fields[fieldsKey]
 
     # Renderer given?
-    
     if fieldsRendererPlain not instanceof FieldsRendererPlain
       return innerFields
-    innerSplitterFields = fieldsRendererPlain.getFields() or []
-    if not innerSplitterFields
-      return innerFields
-
-    splitterFieldNames = @__getListOfFieldNamesInsideSplitter(innerSplitterFields)
 
     # das "rendered hat überhaupt nichts zu bedeuten für meine Auswertung?!?!?!!!!!"
-    splitterFieldNamesFlat = that.__getFlatListOfAffectedSplitterFields(opts.data, '', splitterFieldNames)
+    actionFields = @.__getActionFields(opts)
 
-    for splitterField in splitterFieldNamesFlat
-      if splitterField.name == observedFieldName
+    for actionField in actionFields
+      if actionField.name == observedFieldName
         # get type of observed field
-        columnType = splitterField.type
-        observedField = splitterField.field
+        columnType = actionField.type
+        observedField = actionField.field
 
     if observedField
       CUI.Events.listen
         type: ["editor-load"]
         call: (ev, info) =>
-          that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+          that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, actionFields)
 
       # only trigger if node equals observedfield
       CUI.Events.listen
         type: ["data-changed", "editor-changed"]
         node: observedField.getElement()
         call: (ev, info) =>
-          that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+          that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, actionFields)
 
-      that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, splitterFieldNamesFlat)
+      # listens to nested fields and recreate actionsField-List
+      CUI.Events.listen
+        type: ["editor-changed"]
+        call: (ev, info) =>
+          if ev?.opts?.node?.classList?.contains('ez5-nested') || ev?.opts?.node?.classList?.contains('ez5-field-block-content')
+            actionFields = @.__getActionFields(opts)
+            that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, actionFields)
+          
+      that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, actionFields)
 
       div = CUI.dom.element("div", class: "fylr-editor-field-visibility" )
       if that.getDataOptions()?.debugwithborder
