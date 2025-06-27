@@ -174,16 +174,17 @@ class EditorFieldVisibility extends CustomMaskSplitter
       isInSummary = opts.__is_in_nested_summary
 
     # no action in detail-mode, expertsearch, nested-summary
-    if opts.mode == "detail" || opts.mode == "expert" || opts.head == 'editor-header' || isInSummary == true
+    if opts.mode == "detail" || opts.mode == "expert" || opts.head == 'editor-header' || isInSummary == true
       return innerFields
 
     jsonMap = @getDataOptions().jsonmap
     jsonTargetPath = @getDataOptions().jsontargetpath
 
     if CUI.util.isEmpty(jsonMap)
-      return innerFields
-    else
-      jsonMap = JSON.parse(jsonMap)
+      jsonMap = '{}'
+      console.warn "EditorFieldVisibility: No jsonMap given, using empty map. No fields will be shown or hidden."
+
+    jsonMap = JSON.parse(jsonMap)
 
     for jsonMapKey, jsonMapEntry of jsonMap
       for fieldsValue, fieldsKey in jsonMapEntry.fields
@@ -232,6 +233,8 @@ class EditorFieldVisibility extends CustomMaskSplitter
           border: "4px dashed #CCC"
 
       return CUI.dom.append(div, innerFields)
+    else
+      console.warn "EditorFieldVisibility: No observedfield set in maskOption"
 
 
   ##########################################################################################
@@ -344,7 +347,6 @@ class EditorFieldVisibility extends CustomMaskSplitter
         type: "content-resize"
         node: observedField.getElement()
     
-
 
   ##################################################################################
   # hide an clear a mask-field
