@@ -205,6 +205,8 @@ class EditorFieldVisibility extends CustomMaskSplitter
         observedField = actionField.field
 
     if observedField
+
+      # listens to nested fields and recreate actionsField-List
       CUI.Events.listen
         type: ["editor-load"]
         call: (ev, info) =>
@@ -217,9 +219,9 @@ class EditorFieldVisibility extends CustomMaskSplitter
         call: (ev, info) =>
           that.__manageVisibilitys(opts, columnType, observedField, jsonMap, observedFieldName, actionFields)
 
-      # listens to nested fields and recreate actionsField-List
+      # listens to nested fields, nested-popover-fields and recreate actionsField-List
       CUI.Events.listen
-        type: ["editor-changed"]
+        type: ["editor-changed", "nested-popup-editor-opened"]
         call: (ev, info) =>
           if ev?.opts?.node?.classList?.contains('ez5-nested') || ev?.opts?.node?.classList?.contains('ez5-field-block-content')
             actionFields = @.__getActionFields(opts)
