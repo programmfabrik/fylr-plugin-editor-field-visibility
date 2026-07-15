@@ -6,8 +6,22 @@ plugin:
     de-DE: Editor field visibility
     en-US: Editor field visibility
   info:
-    de-DE: Custom Mask Splitter to show and/or hide fields in Editor, depending on other fields.
-    en-US: Custom Mask Splitter to show and/or hide fields in Editor, depending on other fields.
+    de-DE: |
+      Ein Custom Mask Splitter für [fylr](https://documentation.fylr.cloud/docs), der Maskenfelder im Editor abhängig vom Wert eines anderen Feldes ein- oder ausblendet. Damit lassen sich dynamische Formulare umsetzen, bei denen die Auswahl eines Werts zugehörige Felder sichtbar macht oder verbirgt.
+
+      - Beobachtet ein Auslöserfeld und schaltet die Sichtbarkeit von Zielfeldern
+      - Das Auslöserfeld muss ein Dante-Custom-Data-Type oder ein boolesches Feld sein
+      - Konfiguration je Maske über Feldname, eine JSON-Map der zu steuernden Felder und einen JSON-Pfad
+
+      Für easydb5-Instanzen steht das separate Plugin easydb-editor-field-visibility zur Verfügung.
+    en-US: |
+      A Custom Mask Splitter for [fylr](https://documentation.fylr.cloud/docs) that shows or hides mask fields in the editor depending on the value of another field. Use it to build dynamic forms where selecting a value reveals or conceals related fields.
+
+      - Watches a trigger field and toggles the visibility of target fields
+      - The trigger field must be a Dante custom data type or a boolean field
+      - Configured per mask via the observed field name, a JSON map of the fields to control, and a JSON path
+
+      For easydb5 instances, use the separate easydb-editor-field-visibility plugin.
   l10n: l10n/EditorFieldVisibility.csv
   webfrontend:
     url: EditorFieldVisibility.js
