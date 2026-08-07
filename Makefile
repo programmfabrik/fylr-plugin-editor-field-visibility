@@ -1,48 +1,44 @@
-ZIP_NAME ?= "EditorFieldVisibility.zip"
+# fylr plugins are built by fylr-build-plugin, the build driver that knows how
+# a fylr plugin is put together (compile, assemble build/, zip, seal, loca).
+# This Makefile is a thin shim for muscle memory — all logic lives in the
+# tool. @latest always resolves the tool's newest release, so plugins pick up
+# fixes without being touched; an incompatible tool change would come as a new
+# major version (import path .../v2), which is the only event that changes
+# this line.
+#
+# Tools needed (each only for the features this plugin uses):
+#   go       runs fylr-build-plugin — https://go.dev/dl/
+#   coffee   CoffeeScript 1.x:  npm install -g coffeescript@1.12.7
+#   sass     npm install -g sass
+FYLR_BUILD_PLUGIN ?= go run github.com/programmfabrik/fylr-build-plugin@latest
 
-PLUGIN_NAME = editor-field-visibility
-
-COFFEE_FILES = EditorFieldVisibility.coffee
+# The tool itself reads NO environment variables — everything is passed as
+# flags. The release workflow's RELEASE_TAG env is translated into a flag
+# right here. The zip's NAME is not passed: fylr-build-plugin always names it
+# <repo>.zip, which is the naming rule for every fylr plugin release.
+RELEASE_FLAGS = $(if $(RELEASE_TAG),-release "$(RELEASE_TAG)")
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 all: build ## build all
 
-build: clean ## clean, compile, copy files to build folder
+build: ## build the plugin into build/<name>/ — loadable by fylr via plugin.paths
+	$(FYLR_BUILD_PLUGIN) build $(RELEASE_FLAGS)
 
-					mkdir -p build
-					mkdir -p build/$(PLUGIN_NAME)
-					mkdir -p build/$(PLUGIN_NAME)/webfrontend
-					mkdir -p build/$(PLUGIN_NAME)/l10n
+zip: ## build the release zip
+	$(FYLR_BUILD_PLUGIN) zip $(RELEASE_FLAGS)
 
-					mkdir -p src/tmp # build code from coffee
-					cp src/webfrontend/*.coffee src/tmp
-					cd src/tmp && coffee -b --compile ${COFFEE_FILES} # bare-parameter is obligatory!
-					cat src/tmp/*.js > build/$(PLUGIN_NAME)/webfrontend/EditorFieldVisibility.js
+seal: ## build + seal the release zip (fylr dev/CI key unless -pubkey is passed to the tool)
+	$(FYLR_BUILD_PLUGIN) seal $(RELEASE_FLAGS)
 
-					rm -rf src/tmp # clean tmp
+loca: ## pull the loca CSV from its Google Sheets master (build.yml)
+	$(FYLR_BUILD_PLUGIN) loca
 
-					cp l10n/EditorFieldVisibility.csv build/$(PLUGIN_NAME)/l10n/EditorFieldVisibility.csv # copy l10n
+check: ## validate the build tree against the manifest
+	$(FYLR_BUILD_PLUGIN) check
 
-					cp src/webfrontend/css/EditorFieldVisibility.css build/$(PLUGIN_NAME)/webfrontend/EditorFieldVisibility.css # copy css
+clean: ## clean build files
+	$(FYLR_BUILD_PLUGIN) clean
 
-					cp manifest.master.yml build/$(PLUGIN_NAME)/manifest.yml # copy manifest
-
-					# buildinfo
-					repo=`git remote get-url origin | sed -e 's/\.git$$//' -e 's#.*[/\\]##'` ;\
-					rev=`git show --no-patch --format=%H` ;\
-					lastchanged=`git show --no-patch --format=%ad --date=format:%Y-%m-%dT%T%z` ;\
-					builddate=`date +"%Y-%m-%dT%T%z"` ;\
-					echo '{' > build/$(PLUGIN_NAME)/build-info.json ;\
-					echo '  "repository": "'$$repo'",' >> build/$(PLUGIN_NAME)/build-info.json ;\
-					echo '  "rev": "'$$rev'",' >> build/$(PLUGIN_NAME)/build-info.json ;\
-					echo '  "lastchanged": "'$$lastchanged'",' >> build/$(PLUGIN_NAME)/build-info.json ;\
-					echo '  "builddate": "'$$builddate'"' >> build/$(PLUGIN_NAME)/build-info.json ;\
-					echo '}' >> build/$(PLUGIN_NAME)/build-info.json
-
-clean: ## clean
-				rm -rf build
-
-zip: build ## build zip file
-			cd build && zip ${ZIP_NAME} -r $(PLUGIN_NAME)/
+.PHONY: help all build zip seal loca check clean
