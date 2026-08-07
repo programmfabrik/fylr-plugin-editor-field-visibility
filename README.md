@@ -16,7 +16,7 @@ For easydb5-instances use [easydb-editor-field-visibility](https://github.com/pr
 
 ## installation
 
-The latest version of this plugin can be found [here](https://github.com/programmfabrik/fylr-editor-field-visibility/releases/latest/download/EditorFieldVisibility.zip).
+The latest version of this plugin can be found [here](https://github.com/programmfabrik/fylr-plugin-editor-field-visibility/releases/latest/download/fylr-plugin-editor-field-visibility.zip).
 
 The ZIP can be downloaded and installed using the plugin manager, or used directly (recommended).
 
