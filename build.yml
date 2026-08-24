@@ -12,10 +12,14 @@ server:
   install:
   - l10n/EditorFieldVisibility.csv
 webfrontend:
-  coffee1:
-  - webfrontend/EditorFieldVisibility.coffee
+  # assembled into plugin.webfrontend.url, in this order:
+  # .coffee is compiled (CoffeeScript 1.x), .scss compiled,
+  # anything else taken verbatim
+  bundles:
+    - sources:
+        - webfrontend/EditorFieldVisibility.coffee
   install:
   - webfrontend/EditorFieldVisibility.css
-build:
-  zip_aliases:
-  - EditorFieldVisibility.zip
+
+zip_aliases:
+- EditorFieldVisibility.zip
